@@ -1,0 +1,27 @@
+device: COM4
+description: Standard Serial over Bluetooth link (COM4)
+hwid: BTHENUM\{00001101-0000-1000-8000-00805F9B34FB}_LOCALMFG&0002\7&2EA12FD4&0&001B660A8BA7_C00000000
+interface: None
+location: None
+manufacturer: Microsoft
+name: COM4
+pid: None
+product: None
+serial number: None
+usb description: <bound method ListPortInfo.usb_description of <serial.tools.list_ports_common.ListPortInfo object at 0x000002363D7B3BB0>>
+usb info: <bound method ListPortInfo.usb_info of <serial.tools.list_ports_common.ListPortInfo object at 0x000002363D7B3BB0>>
+vid: None
+
+device: COM5
+description: Prolific USB-to-Serial Comm Port (COM5)
+hwid: USB VID:PID=067B:2303 SER= LOCATION=1-2
+interface: None
+location: 1-2
+manufacturer: Prolific
+name: COM5
+pid: 8963
+product: None
+serial number:
+usb description: <bound method ListPortInfo.usb_description of <serial.tools.list_ports_common.ListPortInfo object at 0x000002363D7B3EB0>>
+usb info: <bound method ListPortInfo.usb_info of <serial.tools.list_ports_common.ListPortInfo object at 0x000002363D7B3EB0>>
+vid: 1659
