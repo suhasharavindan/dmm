@@ -6,6 +6,7 @@
 import time
 import numpy as np
 import serial
+import serial.tools.list_ports
 
 def read_ports():
     """Find ports with DMM connection.
@@ -15,24 +16,21 @@ def read_ports():
     """
     ports = []
     for comport in serial.tools.list_ports.comports():
-        #if comport.vid
-        #if comport.location
-        #if 'USB-to-Serial' in comport.description
-        if comport.pid:
+        if 'USB-to-Serial' in comport.description:
             ports.append(comport.device)
 
     return ports
 
-def read_DMMs(conf, dmms=None, sleepTime=0.5, meas_time=10000, val_range="AUTO", val_res=0.001):
+def read_DMMs(conf, dmms=None, sleep_time=0, meas_time=10000, val_range=1, val_res=1e-6):
     """Take specified measurement from multiple DMMs at every period for a set amount of time.
 
     Args:
         conf (str): Measurement mode. Look at set_CONF function for options.
         dmms (list DMM34401A, optional): DMM objects. Defaults to None.
-        sleepTime (float, optional): Sleep time between measurements in sec. Defaults to 0.5.
+        sleepTime (float, optional): Sleep time between measurements in sec. Defaults to 0.
         meas_time (int, optional): Total measurement time in sec. Defaults to 10000.
-        val_range (str, optional): Approximate measurement range in standard units. Defaults to "AUTO".
-        val_res (float, optional): Measurement resolution in standard units. Defaults to 0.001.
+        val_range (int, optional): Approximate measurement range in standard units. Defaults to 1.
+        val_res (float, optional): Measurement resolution in standard units. Defaults to 1e-6.
 
     Returns:
         np.array: Array of collected measurements
@@ -60,7 +58,7 @@ def read_DMMs(conf, dmms=None, sleepTime=0.5, meas_time=10000, val_range="AUTO",
     try:
         while (toc - tic) < meas_time:
             # A pause is required between reads
-            time.sleep(sleepTime)
+            time.sleep(sleep_time)
 
             toc = time.time()
             measurements = []
@@ -106,6 +104,16 @@ class DMM34401A:
     """DMM object."""
 
     def __init__(self, port_num, baudrate=9600, parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_TWO, bytesize=serial.EIGHTBITS, xonxoff=True):
+        """Initialize serial connection for DMM object.
+
+        Args:
+            port_num (str): Serial port.
+            baudrate (int, optional): Serial baud rate. Defaults to 9600.
+            parity (str, optional): Serial parity. Defaults to serial.PARITY_NONE.
+            stopbits (int, optional): Serial stop bits. Defaults to serial.STOPBITS_TWO.
+            bytesize (int, optional): Serial byte size. Defaults to serial.EIGHTBITS.
+            xonxoff (bool, optional): Software flow control. Defaults to True.
+        """
         self.ser = serial.Serial(port = port_num,
                                  baudrate = baudrate,
                                  parity = parity,
@@ -126,30 +134,29 @@ class DMM34401A:
         output = self.ser.write("*IDN?\n".encode())
         return output
 
-    def set_CONF(self, conf, val_range="AUTO", val_res=0.001):
+    def set_CONF(self, conf, val_range=1, val_res=0.001):
         """Set DMM to measurement mode.
 
         Args:
             conf (str): Measurement mode.
-            val_range (str or int, optional): Approximate range of measurement in standard units. Defaults to "AUTO".
+            val_range (int, optional): Approximate range of measurement in standard units. Defaults to 1.
             val_res (float, optional): Measurement resolution in standard units. Defaults to 0.001.
         """
-
-        if conf is "DCV": # DC voltage
+        if conf == "DCV": # DC voltage
             self.ser.write(f"CONF:VOLT:DC {val_range}, {val_res}\n".encode())
-        elif conf is "ACV": # AC voltage
+        elif conf == "ACV": # AC voltage
             self.ser.write(f"CONF:VOLT:AC {val_range}, {val_res}\n".encode())
-        elif conf is "DCI": # DC current
+        elif conf == "DCI": # DC current
             self.ser.write(f"CONF:CURR:DC {val_range}, {val_res}\n".encode())
-        elif conf is "ACI": # AC current
+        elif conf == "ACI": # AC current
             self.ser.write(f"CONF:CURR:AC {val_range}, {val_res}\n".encode())
-        elif conf is "RES2": # 2-wire resistance
+        elif conf == "RES2": # 2-wire resistance
             self.ser.write(f"CONF:RES {val_range}, {val_res}\n".encode())
-        elif conf is "RES4": # 4-wire resistance
+        elif conf == "RES4": # 4-wire resistance
             self.ser.write(f"CONF:FRES {val_range}, {val_res}\n".encode())
-        elif conf is "FREQ": # Frequency
+        elif conf == "FREQ": # Frequency
             self.ser.write(f"CONF:FREQ {val_range}, {val_res}\n".encode())
-        elif conf is "PER": # Period
+        elif conf == "PER": # Period
             self.ser.write(f"CONF:PER {val_range}, {val_res}\n".encode())
         else:
             pass
