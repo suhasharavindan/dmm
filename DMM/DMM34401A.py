@@ -9,14 +9,14 @@ import serial
 import serial.tools.list_ports
 
 def read_ports():
-    """Find ports with DMM connection.
+    """Find ports to DMM by assuming USB connection.
 
     Returns:
         list str: DMM ports.
     """
     ports = []
     for comport in serial.tools.list_ports.comports():
-        if 'USB-to-Serial' in comport.description:
+        if 'USB' in comport.description:
             ports.append(comport.device)
 
     return ports
