@@ -29,7 +29,7 @@ def read_DMMs(conf, dmms=None, sleep_time=0, meas_time=10000, val_range=1, val_r
         dmms (list DMM34401A, optional): DMM objects. Defaults to None.
         sleepTime (float, optional): Sleep time between measurements in sec. Defaults to 0.
         meas_time (int, optional): Total measurement time in sec. Defaults to 10000.
-        val_range (int, optional): Approximate measurement range in standard units. Defaults to 1.
+        val_range (int or list, optional): Approximate measurement range in standard units. Defaults to 1.
         val_res (float, optional): Measurement resolution in standard units. Defaults to 1e-6.
 
     Returns:
@@ -43,8 +43,13 @@ def read_DMMs(conf, dmms=None, sleep_time=0, meas_time=10000, val_range=1, val_r
         dmms = list(dmms)
 
     # Set measurement mode on DMMs
-    for dmm in dmms:
-        dmm.set_CONF(conf, val_range, val_res)
+    # If a different range is needed per DMM, a list should be passed in the same order of the DMMs
+    if isinstance(val_range, list):
+        for idx, dmm in enumerate(dmms):
+            dmm.set_CONF(conf, val_range[idx], val_res)
+    else:
+        for dmm in dmms:
+            dmm.set_CONF(conf, val_range, val_res)
 
     time.sleep(2)
     print("Start Reading")
