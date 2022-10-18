@@ -62,9 +62,6 @@ def read_DMMs(conf, dmms=None, sleep_time=0, meas_time=10000, val_range=1, val_r
     # Read DMMs
     try:
         while (toc - tic) < meas_time:
-            # A pause is required between reads
-            time.sleep(sleep_time)
-
             toc = time.time()
             measurements = []
             for dmm in dmms:
@@ -73,6 +70,9 @@ def read_DMMs(conf, dmms=None, sleep_time=0, meas_time=10000, val_range=1, val_r
             vals = [(toc-tic)] + measurements
             print(*vals, sep='\t')
             output.append(vals)
+
+            # A pause is required between reads
+            time.sleep(sleep_time)
 
         return np.array(output)
 
