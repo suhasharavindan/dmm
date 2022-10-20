@@ -51,7 +51,7 @@ def read_DMMs(conf, dmms=None, sleep_time=0, meas_time=10000, val_range=1, val_r
         for dmm in dmms:
             dmm.set_CONF(conf, val_range, val_res)
 
-    time.sleep(2)
+    time.sleep(10)
     print("Start Reading")
     output = []
 
